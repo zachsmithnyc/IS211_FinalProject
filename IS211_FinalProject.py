@@ -3,12 +3,17 @@ from flask import render_template
 from flask import url_for, redirect
 from flask import request
 from flask import g, session, flash
-from werkzeug import check_password_hash, generate_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.exceptions import abort
 import functools
 import sqlite3 as lite 
 
 
 app = Flask(__name__)
+
+'''
+Database Initialization
+'''
 
 def get_db():
     db = lite.connect('database.db')
@@ -22,6 +27,10 @@ def init_db():
 
     with app.open_resource('schema.sql') as f:
         db.executescript(f.read().decode('utf8'))
+
+'''
+Authentication Controllers
+'''
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -87,7 +96,7 @@ def logout():
     session.clear()
     return redirect('/')
 
-@app.before_app_request
+@app.before_request
 def load_logged_in_user():
     user_id = session.get('user_id')
 
@@ -107,3 +116,12 @@ def login_required(view):
         return view(**kwargs)
     
     return wrapped_view
+
+'''
+Blog Dashboard Controllers
+'''
+
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
