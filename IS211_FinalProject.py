@@ -121,6 +121,41 @@ def login_required(view):
 Blog Dashboard Controllers
 '''
 
+app.route('/')
+def dashboard():
+    db = get_db()
+    posts = db.execute(
+        "SELECT p.id, title, body, created, author_id, username"
+        " FROM post p JOIN user u ON p.author_id = u.id"
+        " ORDER BY created DESC"
+    ).fetchall()
+    return render_template('dashboard.html', posts=posts)
+
+app.route('/create', methods=['GET', 'POST'])
+@login_required
+def create():
+    if request.method == 'POST':
+        title = request.form['title']
+        body = request.form['body']
+        error = None
+
+        if not title:
+            error = 'Title is required'
+
+        if error is not None:
+            flash(error)
+        else:
+            db = get_db()
+            db.execute(
+                "INSERT INTO post (title, body, author_id)"
+                " VALUES (?, ?, ?)",
+                (title, body, g.user['id'])
+            )
+            db.commit()
+            return redirect('/dashboard')
+
+    return render_template('create.html')
+
 
 
 if __name__ == "__main__":
