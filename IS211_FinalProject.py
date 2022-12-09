@@ -10,6 +10,10 @@ import sqlite3 as lite
 
 
 app = Flask(__name__)
+app.config.from_mapping(
+    SECRET_KEY='dev'
+)
+
 
 '''
 Database Initialization
@@ -84,7 +88,7 @@ def login():
         
         if error is None:
             session.clear()
-            session['user.id'] = user['id']
+            session['user_id'] = user['id']
             return redirect('/')
 
         flash(error)
@@ -108,7 +112,7 @@ def load_logged_in_user():
         ).fetchone()
 
 def login_required(view):
-    @functools.wrap(view)
+    @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
             return redirect('/login')
@@ -121,7 +125,7 @@ def login_required(view):
 Blog Dashboard Controllers
 '''
 
-app.route('/')
+@app.route('/')
 def dashboard():
     db = get_db()
     posts = db.execute(
@@ -131,7 +135,7 @@ def dashboard():
     ).fetchall()
     return render_template('dashboard.html', posts=posts)
 
-app.route('/create', methods=['GET', 'POST'])
+@app.route('/create', methods=['GET', 'POST'])
 @login_required
 def create():
     if request.method == 'POST':
