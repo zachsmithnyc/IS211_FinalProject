@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask import render_template
 from flask import url_for, redirect
@@ -8,19 +9,32 @@ from werkzeug.exceptions import abort
 import functools
 import sqlite3 as lite 
 
-
-app = Flask(__name__)
+test_config = None
+app = Flask(__name__, instance_relative_config=True)
 app.config.from_mapping(
-    SECRET_KEY='dev'
+    SECRET_KEY='dev',
+    DATABASE=os.path.join(app.instance_path, 'database.sqlite')
 )
 
+if test_config is None:
+    app.config.from_pyfile('config.py', silent=True)
+else:
+    app.config.from_mapping(test_config)
+
+try:
+    os.makedirs(app.instance_path)
+except OSError:
+    pass
 
 '''
 Database Initialization
 '''
 
 def get_db():
-    db = lite.connect('database.db')
+    db = lite.connect(
+        app.config['DATABASE'],
+        detect_types=lite.PARSE_DECLTYPES
+        )
     db.row_factory = lite.Row
     
     return db
@@ -216,4 +230,5 @@ def delete(id):
 
 
 if __name__ == "__main__":
+    init_db()
     app.run(debug=True)
