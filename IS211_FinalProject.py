@@ -201,6 +201,18 @@ def get_post(id, check_author=True):
     
     return post
 
+def get_future_post(id):
+    """
+    a function to retrieve stored posts to publish
+    """
+    post = get_db().execute(
+        "SELECT title, body"
+        " FROM future_posts"
+        " WHERE id = ?",
+        (id,)
+    ).fetchone()
+    return post
+
 @app.route('/<int:id>/update', methods=['GET', 'POST'])
 @login_required
 def update(id):
