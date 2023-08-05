@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS post;
+DROP TABLE IF EXISTS future_posts;
 
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,7 +20,7 @@ CREATE TABLE post (
 CREATE TABLE future_posts(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   title TEXT NOT NULL,
-  boby TEXT NOT NULL
+  body TEXT NOT NULL
 );
 
 INSERT INTO post (author_id, title, body) VALUES (1, 'Web Development', 'I really like web development. It is quite fun indeed.');
