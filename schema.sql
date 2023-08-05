@@ -16,4 +16,12 @@ CREATE TABLE post (
   FOREIGN KEY (author_id) REFERENCES user (id)
 );
 
+CREATE TABLE future_posts(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  boby TEXT NOT NULL
+);
+
 INSERT INTO post (author_id, title, body) VALUES (1, 'Web Development', 'I really like web development. It is quite fun indeed.');
+INSERT INTO future_posts(title, body) VALUES ('Wood is Cool', 'Yo I think wood is cool man.');
+INSERT INTO future_posts(title, body) VALUES ('Wood is Still Cool', 'Wood is even cooler today than it was before.');
