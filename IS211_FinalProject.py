@@ -1,4 +1,5 @@
 import os
+import random
 from flask import Flask
 from flask import render_template
 from flask import url_for, redirect
@@ -247,6 +248,16 @@ def delete(id):
     get_post(id)
     db = get_db()
     db.execute("DELETE FROM post WHERE id = ?", (id,))
+    db.commit()
+    return redirect('/')
+
+@app.route('/auto', methods=['GET','POST'])
+@login_required
+def auto_add():
+    id = random.randint(1, 2)
+    post = get_future_post(id)
+    db = get_db()
+    db.execute("INSERT INTO post (title, body, author_id) VALUES (?, ?, ?)", (post['title'], post['body'], g.user['id']))
     db.commit()
     return redirect('/')
 
